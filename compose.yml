@@ -26,7 +26,7 @@ services:
     env_file:
       - .env
     environment:
-      - ENVIRONMENT=${ENVIRONMENT}
+      - ENVIRONMENT=${ENVIRONMENT?Variable not set}
       - SECRET_KEY=${SECRET_KEY?Variable not set}
       - POSTGRES_SERVER=db
       - POSTGRES_PORT=${POSTGRES_PORT}
@@ -127,6 +127,8 @@ services:
       db:
         condition: service_healthy
         restart: true
+      redis:
+        condition: service_healthy
       prestart:
         condition: service_completed_successfully
     env_file:

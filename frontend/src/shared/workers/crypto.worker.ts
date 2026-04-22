@@ -1,3 +1,4 @@
+/// <reference lib="webworker" />
 import sodium from "libsodium-wrappers"
 
 await sodium.ready
