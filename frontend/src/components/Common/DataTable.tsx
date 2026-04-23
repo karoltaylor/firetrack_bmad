@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
       {table.getPageCount() > 1 && (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 border-t bg-muted/20">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground tabular-nums-ui">
               Showing{" "}
               {table.getState().pagination.pageIndex *
                 table.getState().pagination.pageSize +
@@ -105,7 +105,9 @@ export function DataTable<TData, TValue>({
                 data.length,
               )}{" "}
               of{" "}
-              <span className="font-medium text-foreground">{data.length}</span>{" "}
+              <span className="font-medium text-foreground tabular-nums-ui">
+                {data.length}
+              </span>{" "}
               entries
             </div>
             <div className="flex items-center gap-x-2">
@@ -123,7 +125,11 @@ export function DataTable<TData, TValue>({
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[5, 10, 25, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                    <SelectItem
+                      key={pageSize}
+                      value={`${pageSize}`}
+                      className="tabular-nums-ui"
+                    >
                       {pageSize}
                     </SelectItem>
                   ))}
@@ -133,13 +139,13 @@ export function DataTable<TData, TValue>({
           </div>
 
           <div className="flex items-center gap-x-6">
-            <div className="flex items-center gap-x-1 text-sm text-muted-foreground">
+            <div className="flex items-center gap-x-1 text-sm text-muted-foreground tabular-nums-ui">
               <span>Page</span>
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-foreground tabular-nums-ui">
                 {table.getState().pagination.pageIndex + 1}
               </span>
               <span>of</span>
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-foreground tabular-nums-ui">
                 {table.getPageCount()}
               </span>
             </div>
