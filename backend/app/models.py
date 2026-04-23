@@ -122,6 +122,29 @@ class Token(SQLModel):
 # Contents of JWT token
 class TokenPayload(SQLModel):
     sub: str | None = None
+    typ: str | None = None
+
+
+class RefreshTokenPayload(TokenPayload):
+    sub: str
+    sid: str
+    nonce: str
+    typ: str
+
+
+class AuthLoginRequest(SQLModel):
+    email: EmailStr = Field(max_length=255)
+    password: str = Field(min_length=8, max_length=128)
+
+
+class AuthRefreshRequest(SQLModel):
+    refresh_token: str = Field(min_length=1)
+
+
+class AuthTokenPair(SQLModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
 
 
 class NewPassword(SQLModel):
