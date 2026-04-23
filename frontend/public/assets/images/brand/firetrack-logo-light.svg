@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" role="img" aria-labelledby="title desc">
+  <title id="title">FIREtrack logo light</title>
+  <desc id="desc">FIREtrack wordmark for dark surfaces.</desc>
+  <rect x="4" y="8" width="64" height="64" rx="14" fill="#F4F4F5" />
+  <path d="M18 50 30 38l9 9 16-20" fill="none" stroke="#5B4CE6" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
+  <text x="84" y="52" fill="#F4F4F5" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="700" letter-spacing="0.5">FIREtrack</text>
+</svg>

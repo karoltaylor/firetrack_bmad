@@ -1,16 +1,15 @@
-import { FaGithub, FaLinkedinIn } from "react-icons/fa"
-import { FaXTwitter } from "react-icons/fa6"
+import { Github, Linkedin, Twitter } from "lucide-react"
 
 const socialLinks = [
   {
-    icon: FaGithub,
-    href: "https://github.com/fastapi/fastapi",
+    icon: Github,
+    href: "https://github.com/firetrack",
     label: "GitHub",
   },
-  { icon: FaXTwitter, href: "https://x.com/fastapi", label: "X" },
+  { icon: Twitter, href: "https://x.com/firetrackapp", label: "X" },
   {
-    icon: FaLinkedinIn,
-    href: "https://linkedin.com/company/fastapi",
+    icon: Linkedin,
+    href: "https://linkedin.com/company/firetrack",
     label: "LinkedIn",
   },
 ]
@@ -22,7 +21,7 @@ export function Footer() {
     <footer className="border-t py-4 px-6">
       <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <p className="text-muted-foreground text-sm">
-          Full Stack FastAPI Template - {currentYear}
+          FIREtrack - {currentYear}
         </p>
         <div className="flex items-center gap-4">
           {socialLinks.map(({ icon: Icon, href, label }) => (
@@ -34,7 +33,7 @@ export function Footer() {
               aria-label={label}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              <Icon className="h-5 w-5" />
+              <Icon className="h-5 w-5" aria-hidden="true" />
             </a>
           ))}
         </div>

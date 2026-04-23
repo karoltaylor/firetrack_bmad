@@ -26,6 +26,20 @@ repos:
         types: [text]
         files: ^frontend/
 
+      - id: local-icon-policy-check
+        name: icon policy check
+        entry: bun run check:icon-policy
+        pass_filenames: false
+        language: system
+        files: ^frontend/src/.*\.(ts|tsx|js|jsx)$
+
+      - id: local-image-policy-check
+        name: image policy check
+        entry: bun run check:image-policy
+        pass_filenames: false
+        language: system
+        files: ^frontend/(public|src)/.*\.(png|jpg|jpeg|webp|avif|svg)$
+
       - id: local-ruff-check
         name: ruff check
         entry: uv run ruff check --force-exclude --fix --exit-non-zero-on-fix

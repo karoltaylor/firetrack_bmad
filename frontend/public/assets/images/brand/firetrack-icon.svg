@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">FIREtrack icon</title>
+  <desc id="desc">A dark rounded square with a rising line.</desc>
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="#111113" />
+  <path d="M16 42 26 32l8 8 14-18" fill="none" stroke="#7C6BFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+</svg>
