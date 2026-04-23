@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
 
@@ -13,6 +13,7 @@ const cssSource = readFileSync(cssPath, "utf8")
 const htmlSource = readFileSync(htmlPath, "utf8")
 const buttonSource = readFileSync(buttonPath, "utf8")
 const sidebarSource = readFileSync(sidebarPath, "utf8")
+const fontsDirPath = path.resolve(__dirname, "../../public/fonts")
 
 const rootBlock = cssSource.match(/:root\s*\{([\s\S]*?)\}/)?.[1] ?? ""
 const lightBlock =
@@ -46,6 +47,21 @@ const toContrastRatio = (foreground: string, background: string): number => {
 const getTokenValue = (scope: string, token: string): string => {
   const match = scope.match(new RegExp(`${token}:\\s*([^;]+);`))
   return match?.[1]?.trim() ?? ""
+}
+
+const getPreloadedFontHrefs = (): string[] => {
+  const parsedDocument = new DOMParser().parseFromString(
+    htmlSource,
+    "text/html",
+  )
+  return Array.from(
+    parsedDocument.querySelectorAll(
+      'link[rel="preload"][as="font"][type="font/woff2"]',
+    ),
+  )
+    .filter((link) => link.hasAttribute("crossorigin"))
+    .map((link) => link.getAttribute("href") ?? "")
+    .filter((href): href is string => href.length > 0)
 }
 
 const expectHex = (actual: string, expected: string) => {
@@ -132,6 +148,8 @@ describe("design token contract", () => {
     expect(inlineThemeBlock).toContain("--text-hero: var(--type-hero);")
     expect(inlineThemeBlock).toContain("--text-body: var(--type-body);")
     expect(inlineThemeBlock).toContain("--text-caption: var(--type-caption);")
+    expect(themeBlock).toContain('"Inter Fallback"')
+    expect(themeBlock).toContain('"JetBrains Mono Fallback"')
     expect(themeBlock).toContain('"IBM Plex Mono"')
   })
 
@@ -139,7 +157,7 @@ describe("design token contract", () => {
     const interWeights = [400, 500, 600]
     const monoWeights = [400, 500]
     const latinRangeToken = "U+0000-00ff"
-    const latinExtRangeToken = "U+0100-024f"
+    const latinExtRangeToken = "U+0100-017f"
 
     for (const weight of interWeights) {
       const matches =
@@ -169,16 +187,27 @@ describe("design token contract", () => {
     expect(cssSource).toContain(".tabular-nums-ui")
     expect(cssSource).toContain(".financial-numeric")
   })
+
+  it("defines fallback metric overrides for CLS-safe font swaps", () => {
+    const interFallbackMatch = cssSource.match(
+      /font-family:\s*"Inter Fallback";[\s\S]*?size-adjust:\s*[\d.]+%;/,
+    )
+    const monoFallbackMatch = cssSource.match(
+      /font-family:\s*"JetBrains Mono Fallback";[\s\S]*?size-adjust:\s*[\d.]+%;/,
+    )
+
+    expect(interFallbackMatch?.[0]).toContain("ascent-override:")
+    expect(interFallbackMatch?.[0]).toContain("descent-override:")
+    expect(interFallbackMatch?.[0]).toContain("line-gap-override:")
+    expect(monoFallbackMatch?.[0]).toContain("ascent-override:")
+    expect(monoFallbackMatch?.[0]).toContain("descent-override:")
+    expect(monoFallbackMatch?.[0]).toContain("line-gap-override:")
+  })
 })
 
 describe("font preload strategy", () => {
   it("preloads only medium (500) Inter and JetBrains Mono variants", () => {
-    const preloadedWoff2Files = Array.from(
-      htmlSource.matchAll(
-        /<link[\s\S]*?rel="preload"[\s\S]*?href="([^"]+\.woff2)"[\s\S]*?as="font"[\s\S]*?type="font\/woff2"[\s\S]*?crossorigin[\s\S]*?>/g,
-      ),
-      (match) => match[1],
-    )
+    const preloadedWoff2Files = getPreloadedFontHrefs()
 
     expect(preloadedWoff2Files.sort()).toEqual(
       [
@@ -188,6 +217,23 @@ describe("font preload strategy", () => {
         "/fonts/jetbrains-mono-latin-ext-500-normal.woff2",
       ].sort(),
     )
+  })
+
+  it("ensures each declared and preloaded font file exists on disk", () => {
+    const declaredFontFiles = Array.from(
+      cssSource.matchAll(/\/fonts\/([a-z0-9-]+\.woff2)/gi),
+      (match) => match[1],
+    )
+    const preloadedFontFiles = getPreloadedFontHrefs().map((href) =>
+      href.replace("/fonts/", ""),
+    )
+    const uniqueFontFiles = Array.from(
+      new Set([...declaredFontFiles, ...preloadedFontFiles]),
+    )
+
+    for (const fontFile of uniqueFontFiles) {
+      expect(existsSync(path.join(fontsDirPath, fontFile))).toBe(true)
+    }
   })
 })
 
