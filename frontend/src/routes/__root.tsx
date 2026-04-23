@@ -1,6 +1,5 @@
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
+import { type ReactNode, useEffect, useState } from "react"
 import BrowserSupportBanner from "@/components/Common/BrowserSupportBanner"
 import ErrorComponent from "@/components/Common/ErrorComponent"
 import NotFound from "@/components/Common/NotFound"
@@ -37,10 +36,29 @@ function RootRouteComponent() {
       <BrowserSupportBanner />
       <HeadContent />
       <Outlet />
-      <TanStackRouterDevtools position="bottom-right" />
-      <ReactQueryDevtools initialIsOpen={false} />
+      <DevtoolsHost />
     </>
   )
+}
+
+function DevtoolsHost() {
+  const [panel, setPanel] = useState<ReactNode | null>(null)
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) {
+      return
+    }
+
+    void import("@/dev/RootDevtools")
+      .then(({ RootDevtools }) => {
+        setPanel(<RootDevtools />)
+      })
+      .catch(() => {
+        // Ignore failed devtool loads (e.g. rare chunk failures); never block the app.
+      })
+  }, [])
+
+  return panel
 }
 
 export const Route = createRootRoute({

@@ -293,6 +293,14 @@ describe("render sanity for newly added primitives", () => {
 })
 
 describe("app-level keyboard scaffolding", () => {
+  it("loads TanStack devtools only via dynamic import (no static devtool imports in root route)", () => {
+    expect(existsSync(rootRoutePath)).toBe(true)
+    const source = readFileSync(rootRoutePath, "utf8")
+    expect(source).not.toMatch(/@tanstack\/react-query-devtools/)
+    expect(source).not.toMatch(/@tanstack\/react-router-devtools/)
+    expect(source).toContain('import("@/dev/RootDevtools")')
+  })
+
   it("defines skip links and live regions in root route", () => {
     expect(existsSync(rootRoutePath)).toBe(true)
     const source = readFileSync(rootRoutePath, "utf8")

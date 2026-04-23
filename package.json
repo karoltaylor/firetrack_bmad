@@ -20,6 +20,7 @@
     "test": "bun run --filter frontend test",
     "test:axe": "bun run --filter frontend test:e2e:axe",
     "test:lighthouse": "bun run --filter frontend test:lighthouse",
+    "test:ci-frontend": "bun run --filter frontend build && bun run test:lighthouse",
     "test:ui": "bun run --filter frontend test:e2e:ui",
     "test:policy": "node --test ./scripts/tests/*.test.mjs"
   }
