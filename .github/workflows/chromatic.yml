@@ -1,0 +1,47 @@
+name: Chromatic
+
+on:
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/chromatic.yml"
+      - ".github/pull_request_template.md"
+      - ".github/CODEOWNERS"
+
+jobs:
+  chromatic:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Publish Storybook to Chromatic
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+        uses: chromaui/action@v11
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: frontend
+          buildScriptName: build-storybook
+          exitZeroOnChanges: true
+
+      - name: Require Chromatic token for internal pull requests
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN == '' && github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          echo "CHROMATIC_PROJECT_TOKEN is required for internal pull requests."
+          echo "Add the secret so visual baselines are always validated in CI."
+          exit 1
+
+      - name: Chromatic token missing on forked pull request
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN == '' && github.event.pull_request.head.repo.full_name != github.repository }}
+        run: |
+          echo "CHROMATIC_PROJECT_TOKEN is unavailable on forked pull requests."
+          echo "Skipping snapshot upload for fork security constraints."

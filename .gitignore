@@ -19,6 +19,8 @@ dist-ssr/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/frontend/storybook-static/
+/.chromatic/
 
 # Python / backend
 __pycache__/

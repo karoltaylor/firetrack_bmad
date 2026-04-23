@@ -1,0 +1,7 @@
+# Core ownership
+* @karoltaylor
+
+# Component implementation + design-contract stories
+/frontend/src/components/ui/**/*.tsx @karoltaylor
+/frontend/src/components/ui/**/*.stories.tsx @karoltaylor
+/frontend/src/components/ui/**/*.stories.mdx @karoltaylor
