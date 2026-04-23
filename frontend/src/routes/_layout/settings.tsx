@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 
 import ChangePassword from "@/components/UserSettings/ChangePassword"
 import DeleteAccount from "@/components/UserSettings/DeleteAccount"
@@ -56,6 +56,7 @@ function UserSettings() {
           </TabsContent>
         ))}
       </Tabs>
+      <Outlet />
     </div>
   )
 }

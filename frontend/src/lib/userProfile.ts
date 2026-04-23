@@ -7,6 +7,7 @@ export type UserProfileRecord = {
   currentAge: number | null
   targetRetirementAge: number | null
   annualExpenses: number | null
+  swrPercent: number
   countryCode: string | null
   baseCurrency: string
   cpi_source: CpiSource | null
@@ -75,6 +76,7 @@ const defaultUserProfile = (): UserProfileRecord => ({
   currentAge: null,
   targetRetirementAge: null,
   annualExpenses: null,
+  swrPercent: 4,
   countryCode: null,
   baseCurrency: "EUR",
   cpi_source: null,

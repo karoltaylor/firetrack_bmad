@@ -76,9 +76,10 @@ function Dashboard() {
 
   const annualExpenses = profile?.annualExpenses ?? null
   const baseCurrency = profile?.baseCurrency ?? "EUR"
+  const swrPercent = profile?.swrPercent ?? 4
   const fireNumber =
     annualExpenses && annualExpenses > 0
-      ? calculateFireNumberFromAnnualExpenses(annualExpenses)
+      ? calculateFireNumberFromAnnualExpenses(annualExpenses, swrPercent)
       : null
   const variantConversion =
     annualExpenses && annualExpenses > 0
@@ -176,6 +177,7 @@ function Dashboard() {
               ? "—"
               : formatMetric(annualExpenses, { currency: baseCurrency })}
           </p>
+          <p className="text-muted-foreground text-sm">SWR: {swrPercent}%</p>
           <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
             Methodology: ECB rate as of {variantConversion?.rateAsOf}
           </span>

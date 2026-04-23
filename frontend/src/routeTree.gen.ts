@@ -19,6 +19,7 @@ import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutOnboardingRouteImport } from './routes/_layout/onboarding'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutSettingsFireGoalRouteImport } from './routes/_layout/settings.fire-goal'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -69,6 +70,11 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutSettingsFireGoalRoute = LayoutSettingsFireGoalRouteImport.update({
+  id: '/fire-goal',
+  path: '/fire-goal',
+  getParentRoute: () => LayoutSettingsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
@@ -79,7 +85,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof LayoutAdminRoute
   '/items': typeof LayoutItemsRoute
   '/onboarding': typeof LayoutOnboardingRoute
-  '/settings': typeof LayoutSettingsRoute
+  '/settings': typeof LayoutSettingsRouteWithChildren
+  '/settings/fire-goal': typeof LayoutSettingsFireGoalRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -89,8 +96,9 @@ export interface FileRoutesByTo {
   '/admin': typeof LayoutAdminRoute
   '/items': typeof LayoutItemsRoute
   '/onboarding': typeof LayoutOnboardingRoute
-  '/settings': typeof LayoutSettingsRoute
+  '/settings': typeof LayoutSettingsRouteWithChildren
   '/': typeof LayoutIndexRoute
+  '/settings/fire-goal': typeof LayoutSettingsFireGoalRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,8 +110,9 @@ export interface FileRoutesById {
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/onboarding': typeof LayoutOnboardingRoute
-  '/_layout/settings': typeof LayoutSettingsRoute
+  '/_layout/settings': typeof LayoutSettingsRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/settings/fire-goal': typeof LayoutSettingsFireGoalRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/items'
     | '/onboarding'
     | '/settings'
+    | '/settings/fire-goal'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/settings'
     | '/'
+    | '/settings/fire-goal'
   id:
     | '__root__'
     | '/_layout'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/_layout/onboarding'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/settings/fire-goal'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -222,14 +234,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/settings/fire-goal': {
+      id: '/_layout/settings/fire-goal'
+      path: '/fire-goal'
+      fullPath: '/settings/fire-goal'
+      preLoaderRoute: typeof LayoutSettingsFireGoalRouteImport
+      parentRoute: typeof LayoutSettingsRoute
+    }
   }
 }
+
+interface LayoutSettingsRouteChildren {
+  LayoutSettingsFireGoalRoute: typeof LayoutSettingsFireGoalRoute
+}
+
+const LayoutSettingsRouteChildren: LayoutSettingsRouteChildren = {
+  LayoutSettingsFireGoalRoute: LayoutSettingsFireGoalRoute,
+}
+
+const LayoutSettingsRouteWithChildren = LayoutSettingsRoute._addFileChildren(
+  LayoutSettingsRouteChildren,
+)
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutOnboardingRoute: typeof LayoutOnboardingRoute
-  LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutSettingsRoute: typeof LayoutSettingsRouteWithChildren
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
@@ -237,7 +268,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutOnboardingRoute: LayoutOnboardingRoute,
-  LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutSettingsRoute: LayoutSettingsRouteWithChildren,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 
