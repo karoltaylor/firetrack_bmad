@@ -10,12 +10,15 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from sentry_sdk.integrations.fastapi import FastApiIntegration
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 
 from app.api.main import api_router
 from app.core.config import settings
 from app.core.observability import configure_structlog, scrub_sentry_event
+from app.core.rate_limit import limiter
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -41,6 +44,7 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
+app.state.limiter = limiter
 
 # Set all CORS enabled origins
 if settings.all_cors_origins:
@@ -53,6 +57,7 @@ if settings.all_cors_origins:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+app.add_middleware(SlowAPIMiddleware)
 
 
 def _problem_details(
@@ -71,6 +76,29 @@ def _problem_details(
         "instance": str(request.url.path),
         "request_id": request_id,
     }
+
+
+@app.middleware("http")
+async def enforce_https_in_production(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    if settings.ENVIRONMENT == "production":
+        forwarded_proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+        if forwarded_proto != "https":
+            request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+            return JSONResponse(
+                status_code=400,
+                media_type="application/problem+json",
+                headers={"X-Request-ID": request_id},
+                content=_problem_details(
+                    request=request,
+                    status_code=400,
+                    title="Insecure Transport",
+                    detail="HTTPS is required in production.",
+                    request_id=request_id,
+                ),
+            )
+    return await call_next(request)
 
 
 @app.middleware("http")
@@ -129,6 +157,28 @@ async def observability_middleware(
         latency_ms=elapsed_ms,
     )
     structlog.contextvars.clear_contextvars()
+    return response
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_exceeded_handler(
+    request: Request, exc: RateLimitExceeded
+) -> JSONResponse:
+    request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
+    response = JSONResponse(
+        status_code=429,
+        media_type="application/problem+json",
+        content=_problem_details(
+            request=request,
+            status_code=429,
+            title="Too Many Requests",
+            detail="Too many requests. Please retry after the cooldown period.",
+            request_id=request_id,
+        ),
+    )
+    retry_after = getattr(exc, "retry_after", None)
+    response.headers["Retry-After"] = str(retry_after or 60)
+    response.headers["X-Request-ID"] = request_id
     return response
 
 

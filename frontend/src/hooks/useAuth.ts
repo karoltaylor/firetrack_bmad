@@ -3,7 +3,9 @@ import { useNavigate } from "@tanstack/react-router"
 
 import {
   type Body_login_login_access_token as AccessToken,
+  ApiError,
   LoginService,
+  OpenAPI,
   type UserPublic,
   type UserRegister,
   UsersService,
@@ -26,9 +28,41 @@ const useAuth = () => {
     enabled: isLoggedIn(),
   })
 
+  const registerWithAuthEndpoint = async (data: UserRegister) => {
+    const response = await fetch(`${OpenAPI.BASE}/api/v1/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    })
+
+    if (!response.ok) {
+      const errorBody = (await response.json().catch(() => null)) as {
+        detail?: string
+      } | null
+      throw new ApiError(
+        {
+          method: "POST",
+          url: "/api/v1/auth/register",
+        },
+        {
+          body: errorBody,
+          ok: false,
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+        },
+        errorBody?.detail ?? "Registration failed",
+      )
+    }
+  }
+
   const signUpMutation = useMutation({
-    mutationFn: (data: UserRegister) =>
-      UsersService.registerUser({ requestBody: data }),
+    mutationFn: registerWithAuthEndpoint,
     onSuccess: () => {
       navigate({ to: "/login" })
     },

@@ -21,6 +21,7 @@ dependencies = [
     "pwdlib[argon2,bcrypt]>=0.3.0",
     "celery[redis]>=5.4,<6.0",
     "structlog>=24.4,<26.0",
+    "slowapi>=0.1.9",
 ]
 
 [dependency-groups]
