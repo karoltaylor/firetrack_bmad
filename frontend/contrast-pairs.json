@@ -1,0 +1,28 @@
+{
+  "pairs": [
+    {
+      "id": "primary-text-on-primary-background",
+      "foreground": "--text-primary",
+      "background": "--bg-primary",
+      "ratio": "AAA"
+    },
+    {
+      "id": "secondary-text-on-primary-background",
+      "foreground": "--text-secondary",
+      "background": "--bg-primary",
+      "ratio": "AA"
+    },
+    {
+      "id": "tertiary-text-on-primary-background",
+      "foreground": "--text-tertiary",
+      "background": "--bg-primary",
+      "ratio": "AA"
+    },
+    {
+      "id": "primary-text-on-elevated-background",
+      "foreground": "--text-primary",
+      "background": "--bg-elevated",
+      "ratio": "AA"
+    }
+  ]
+}
