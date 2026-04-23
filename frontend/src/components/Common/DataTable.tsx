@@ -93,19 +93,23 @@ export function DataTable<TData, TValue>({
       {table.getPageCount() > 1 && (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 border-t bg-muted/20">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="text-sm text-muted-foreground tabular-nums-ui">
+            <div className="text-sm text-muted-foreground">
               Showing{" "}
-              {table.getState().pagination.pageIndex *
-                table.getState().pagination.pageSize +
-                1}{" "}
+              <span className="financial-numeric">
+                {table.getState().pagination.pageIndex *
+                  table.getState().pagination.pageSize +
+                  1}
+              </span>{" "}
               to{" "}
-              {Math.min(
-                (table.getState().pagination.pageIndex + 1) *
-                  table.getState().pagination.pageSize,
-                data.length,
-              )}{" "}
+              <span className="financial-numeric">
+                {Math.min(
+                  (table.getState().pagination.pageIndex + 1) *
+                    table.getState().pagination.pageSize,
+                  data.length,
+                )}
+              </span>{" "}
               of{" "}
-              <span className="font-medium text-foreground tabular-nums-ui">
+              <span className="font-medium text-foreground financial-numeric">
                 {data.length}
               </span>{" "}
               entries
@@ -128,7 +132,7 @@ export function DataTable<TData, TValue>({
                     <SelectItem
                       key={pageSize}
                       value={`${pageSize}`}
-                      className="tabular-nums-ui"
+                      className="financial-numeric"
                     >
                       {pageSize}
                     </SelectItem>
@@ -139,13 +143,13 @@ export function DataTable<TData, TValue>({
           </div>
 
           <div className="flex items-center gap-x-6">
-            <div className="flex items-center gap-x-1 text-sm text-muted-foreground tabular-nums-ui">
+            <div className="flex items-center gap-x-1 text-sm text-muted-foreground">
               <span>Page</span>
-              <span className="font-medium text-foreground tabular-nums-ui">
+              <span className="font-medium text-foreground financial-numeric">
                 {table.getState().pagination.pageIndex + 1}
               </span>
               <span>of</span>
-              <span className="font-medium text-foreground tabular-nums-ui">
+              <span className="font-medium text-foreground financial-numeric">
                 {table.getPageCount()}
               </span>
             </div>

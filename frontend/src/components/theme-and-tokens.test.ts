@@ -5,10 +5,12 @@ import { describe, expect, it } from "vitest"
 import { applyThemeToRoot, resolveTheme } from "@/components/theme-provider"
 
 const cssPath = path.resolve(__dirname, "../index.css")
+const htmlPath = path.resolve(__dirname, "../../index.html")
 const buttonPath = path.resolve(__dirname, "./ui/button.tsx")
 const sidebarPath = path.resolve(__dirname, "./ui/sidebar.tsx")
 
 const cssSource = readFileSync(cssPath, "utf8")
+const htmlSource = readFileSync(htmlPath, "utf8")
 const buttonSource = readFileSync(buttonPath, "utf8")
 const sidebarSource = readFileSync(sidebarPath, "utf8")
 
@@ -130,6 +132,62 @@ describe("design token contract", () => {
     expect(inlineThemeBlock).toContain("--text-hero: var(--type-hero);")
     expect(inlineThemeBlock).toContain("--text-body: var(--type-body);")
     expect(inlineThemeBlock).toContain("--text-caption: var(--type-caption);")
+    expect(themeBlock).toContain('"IBM Plex Mono"')
+  })
+
+  it("defines self-hosted font faces with swap loading and Latin subsets", () => {
+    const interWeights = [400, 500, 600]
+    const monoWeights = [400, 500]
+    const latinRangeToken = "U+0000-00ff"
+    const latinExtRangeToken = "U+0100-024f"
+
+    for (const weight of interWeights) {
+      const matches =
+        cssSource.match(
+          new RegExp(
+            `font-family:\\s*"Inter";[\\s\\S]*?font-weight:\\s*${weight};`,
+            "g",
+          ),
+        ) ?? []
+      expect(matches.length).toBeGreaterThanOrEqual(2)
+    }
+
+    for (const weight of monoWeights) {
+      const matches =
+        cssSource.match(
+          new RegExp(
+            `font-family:\\s*"JetBrains Mono";[\\s\\S]*?font-weight:\\s*${weight};`,
+            "g",
+          ),
+        ) ?? []
+      expect(matches.length).toBeGreaterThanOrEqual(2)
+    }
+
+    expect(cssSource).toContain("font-display: swap;")
+    expect(cssSource).toContain(latinRangeToken)
+    expect(cssSource).toContain(latinExtRangeToken)
+    expect(cssSource).toContain(".tabular-nums-ui")
+    expect(cssSource).toContain(".financial-numeric")
+  })
+})
+
+describe("font preload strategy", () => {
+  it("preloads only medium (500) Inter and JetBrains Mono variants", () => {
+    const preloadedWoff2Files = Array.from(
+      htmlSource.matchAll(
+        /<link[\s\S]*?rel="preload"[\s\S]*?href="([^"]+\.woff2)"[\s\S]*?as="font"[\s\S]*?type="font\/woff2"[\s\S]*?crossorigin[\s\S]*?>/g,
+      ),
+      (match) => match[1],
+    )
+
+    expect(preloadedWoff2Files.sort()).toEqual(
+      [
+        "/fonts/inter-latin-500-normal.woff2",
+        "/fonts/inter-latin-ext-500-normal.woff2",
+        "/fonts/jetbrains-mono-latin-500-normal.woff2",
+        "/fonts/jetbrains-mono-latin-ext-500-normal.woff2",
+      ].sort(),
+    )
   })
 })
 
