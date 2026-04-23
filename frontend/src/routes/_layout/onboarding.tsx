@@ -8,6 +8,7 @@ import {
   COUNTRY_OPTIONS,
   clearUserProfile,
   getCpiSourceForCountry,
+  getCurrencyForCountry,
   getUserProfile,
   isOnboardingComplete,
   THIRTY_DAYS_MS,
@@ -230,6 +231,7 @@ function OnboardingWizard() {
     }
     if (countryCode) {
       patch.countryCode = countryCode
+      patch.baseCurrency = getCurrencyForCountry(countryCode)
       patch.cpi_source = getCpiSourceForCountry(countryCode)
     }
     await queueProfileSave(patch)
@@ -304,6 +306,7 @@ function OnboardingWizard() {
       targetRetirementAge,
       annualExpenses,
       countryCode,
+      baseCurrency: getCurrencyForCountry(countryCode),
       cpi_source: getCpiSourceForCountry(countryCode),
       lastStep: TOTAL_STEPS,
       completedAt: new Date().toISOString(),

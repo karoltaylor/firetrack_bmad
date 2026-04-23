@@ -8,6 +8,7 @@ export type UserProfileRecord = {
   targetRetirementAge: number | null
   annualExpenses: number | null
   countryCode: string | null
+  baseCurrency: string
   cpi_source: CpiSource | null
   lastStep: number
   updatedAt: string
@@ -19,6 +20,7 @@ type UserProfilePatch = Partial<Omit<UserProfileRecord, "id">>
 type CountryOption = {
   code: string
   label: string
+  currency: string
   isEu: boolean
 }
 
@@ -30,16 +32,16 @@ interface FiretrackDb extends DBSchema {
 }
 
 export const COUNTRY_OPTIONS: CountryOption[] = [
-  { code: "PL", label: "Poland", isEu: true },
-  { code: "DE", label: "Germany", isEu: true },
-  { code: "FR", label: "France", isEu: true },
-  { code: "ES", label: "Spain", isEu: true },
-  { code: "IT", label: "Italy", isEu: true },
-  { code: "NL", label: "Netherlands", isEu: true },
-  { code: "GB", label: "United Kingdom", isEu: false },
-  { code: "US", label: "United States", isEu: false },
-  { code: "CA", label: "Canada", isEu: false },
-  { code: "AU", label: "Australia", isEu: false },
+  { code: "PL", label: "Poland", currency: "PLN", isEu: true },
+  { code: "DE", label: "Germany", currency: "EUR", isEu: true },
+  { code: "FR", label: "France", currency: "EUR", isEu: true },
+  { code: "ES", label: "Spain", currency: "EUR", isEu: true },
+  { code: "IT", label: "Italy", currency: "EUR", isEu: true },
+  { code: "NL", label: "Netherlands", currency: "EUR", isEu: true },
+  { code: "GB", label: "United Kingdom", currency: "GBP", isEu: false },
+  { code: "US", label: "United States", currency: "USD", isEu: false },
+  { code: "CA", label: "Canada", currency: "CAD", isEu: false },
+  { code: "AU", label: "Australia", currency: "AUD", isEu: false },
 ]
 
 export const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
@@ -74,6 +76,7 @@ const defaultUserProfile = (): UserProfileRecord => ({
   targetRetirementAge: null,
   annualExpenses: null,
   countryCode: null,
+  baseCurrency: "EUR",
   cpi_source: null,
   lastStep: 1,
   updatedAt: new Date().toISOString(),
@@ -89,6 +92,11 @@ const notifyUserProfileUpdated = () => {
 export const getCpiSourceForCountry = (countryCode: string): CpiSource => {
   const country = COUNTRY_OPTIONS.find((item) => item.code === countryCode)
   return country?.isEu ? "eurostat_hicp" : "world_bank"
+}
+
+export const getCurrencyForCountry = (countryCode: string): string => {
+  const country = COUNTRY_OPTIONS.find((item) => item.code === countryCode)
+  return country?.currency ?? "EUR"
 }
 
 export const getUserProfile = async (): Promise<UserProfileRecord | null> => {

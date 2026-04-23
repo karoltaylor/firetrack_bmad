@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest"
 
-import { getCpiSourceForCountry, isOnboardingComplete } from "./userProfile"
+import {
+  getCpiSourceForCountry,
+  getCurrencyForCountry,
+  isOnboardingComplete,
+} from "./userProfile"
 
 describe("userProfile helpers", () => {
   it("maps EU countries to eurostat_hicp", () => {
@@ -9,6 +13,11 @@ describe("userProfile helpers", () => {
 
   it("maps non-EU countries to world_bank", () => {
     expect(getCpiSourceForCountry("US")).toBe("world_bank")
+  })
+
+  it("maps countries to base currencies", () => {
+    expect(getCurrencyForCountry("PL")).toBe("PLN")
+    expect(getCurrencyForCountry("DE")).toBe("EUR")
   })
 
   it("returns completion state based on completedAt", () => {
@@ -20,6 +29,7 @@ describe("userProfile helpers", () => {
         targetRetirementAge: 55,
         annualExpenses: 42000,
         countryCode: "PL",
+        baseCurrency: "PLN",
         cpi_source: "eurostat_hicp",
         lastStep: 4,
         updatedAt: new Date().toISOString(),
@@ -33,6 +43,7 @@ describe("userProfile helpers", () => {
         targetRetirementAge: 55,
         annualExpenses: 42000,
         countryCode: "PL",
+        baseCurrency: "PLN",
         cpi_source: "eurostat_hicp",
         lastStep: 4,
         updatedAt: new Date().toISOString(),
