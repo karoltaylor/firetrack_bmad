@@ -12,16 +12,21 @@ const NotFound = () => {
           <span className="text-6xl md:text-8xl font-bold leading-none mb-4">
             404
           </span>
-          <span className="text-2xl font-bold mb-2">Oops!</span>
+          <span className="text-2xl font-bold mb-2">Page not found</span>
         </div>
       </div>
 
       <p className="text-lg text-muted-foreground mb-4 text-center z-10">
-        The page you are looking for was not found.
+        This route does not exist. Choose where you want to continue.
       </p>
-      <div className="z-10">
-        <Link to="/">
-          <Button className="mt-4">Go Back</Button>
+      <div className="z-10 flex flex-wrap items-center justify-center gap-3">
+        <Link to="/dashboard">
+          <Button className="mt-2">Go to dashboard</Button>
+        </Link>
+        <Link to="/auth/login">
+          <Button variant="outline" className="mt-2">
+            Go to login
+          </Button>
         </Link>
       </div>
     </div>

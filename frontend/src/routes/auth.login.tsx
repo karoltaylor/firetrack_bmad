@@ -32,8 +32,8 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-export const Route = createFileRoute("/login")({
-  component: Login,
+export const Route = createFileRoute("/auth/login")({
+  component: AuthLogin,
   beforeLoad: async () => {
     if (isLoggedIn()) {
       throw redirect({
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/login")({
   }),
 })
 
-function Login() {
+function AuthLogin() {
   const { loginMutation } = useAuth()
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -143,3 +143,5 @@ function Login() {
     </AuthLayout>
   )
 }
+
+export default AuthLogin

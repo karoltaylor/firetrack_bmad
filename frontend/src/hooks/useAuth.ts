@@ -73,7 +73,7 @@ const useAuth = () => {
   const signUpMutation = useMutation({
     mutationFn: registerWithAuthEndpoint,
     onSuccess: () => {
-      navigate({ to: "/login" })
+      navigate({ to: "/auth/login" })
     },
     onError: handleError.bind(showErrorToast),
     onSettled: () => {
@@ -121,7 +121,7 @@ const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      navigate({ to: "/" })
+      navigate({ to: "/dashboard" })
     },
     onError: handleError.bind(showErrorToast),
   })
@@ -148,7 +148,7 @@ const useAuth = () => {
     }
     localStorage.removeItem("access_token")
     sessionStorage.removeItem("refresh_token")
-    navigate({ to: "/login" })
+    navigate({ to: "/auth/login" })
   }
 
   return {

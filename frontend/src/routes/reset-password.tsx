@@ -51,10 +51,10 @@ export const Route = createFileRoute("/reset-password")({
   validateSearch: searchSchema,
   beforeLoad: async ({ search }) => {
     if (isLoggedIn()) {
-      throw redirect({ to: "/" })
+      throw redirect({ to: "/dashboard" })
     }
     if (!search.token) {
-      throw redirect({ to: "/login" })
+      throw redirect({ to: "/auth/login" })
     }
   },
   head: () => ({
@@ -87,7 +87,7 @@ function ResetPassword() {
     onSuccess: () => {
       showSuccessToast("Password updated successfully")
       form.reset()
-      navigate({ to: "/login" })
+      navigate({ to: "/auth/login" })
     },
     onError: handleError.bind(showErrorToast),
   })
@@ -155,7 +155,10 @@ function ResetPassword() {
 
           <div className="text-center text-sm">
             Remember your password?{" "}
-            <RouterLink to="/login" className="underline underline-offset-4">
+            <RouterLink
+              to="/auth/login"
+              className="underline underline-offset-4"
+            >
               Log in
             </RouterLink>
           </div>

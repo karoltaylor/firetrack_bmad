@@ -15,11 +15,15 @@ import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as AuthRegisterRouteImport } from './routes/auth.register'
+import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutOnboardingRouteImport } from './routes/_layout/onboarding'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
+import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 import { Route as LayoutSettingsFireGoalRouteImport } from './routes/_layout/settings.fire-goal'
+import { Route as LayoutSettingsAccountRouteImport } from './routes/_layout/settings.account'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -50,6 +54,16 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -65,6 +79,11 @@ const LayoutItemsRoute = LayoutItemsRouteImport.update({
   path: '/items',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutDashboardRoute = LayoutDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -75,6 +94,11 @@ const LayoutSettingsFireGoalRoute = LayoutSettingsFireGoalRouteImport.update({
   path: '/fire-goal',
   getParentRoute: () => LayoutSettingsRoute,
 } as any)
+const LayoutSettingsAccountRoute = LayoutSettingsAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => LayoutSettingsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
@@ -83,9 +107,13 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/dashboard': typeof LayoutDashboardRoute
   '/items': typeof LayoutItemsRoute
   '/onboarding': typeof LayoutOnboardingRoute
   '/settings': typeof LayoutSettingsRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/settings/account': typeof LayoutSettingsAccountRoute
   '/settings/fire-goal': typeof LayoutSettingsFireGoalRoute
 }
 export interface FileRoutesByTo {
@@ -94,10 +122,14 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/dashboard': typeof LayoutDashboardRoute
   '/items': typeof LayoutItemsRoute
   '/onboarding': typeof LayoutOnboardingRoute
   '/settings': typeof LayoutSettingsRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/': typeof LayoutIndexRoute
+  '/settings/account': typeof LayoutSettingsAccountRoute
   '/settings/fire-goal': typeof LayoutSettingsFireGoalRoute
 }
 export interface FileRoutesById {
@@ -108,10 +140,14 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/onboarding': typeof LayoutOnboardingRoute
   '/_layout/settings': typeof LayoutSettingsRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/settings/account': typeof LayoutSettingsAccountRoute
   '/_layout/settings/fire-goal': typeof LayoutSettingsFireGoalRoute
 }
 export interface FileRouteTypes {
@@ -123,9 +159,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/dashboard'
     | '/items'
     | '/onboarding'
     | '/settings'
+    | '/auth/login'
+    | '/auth/register'
+    | '/settings/account'
     | '/settings/fire-goal'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -134,10 +174,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/dashboard'
     | '/items'
     | '/onboarding'
     | '/settings'
+    | '/auth/login'
+    | '/auth/register'
     | '/'
+    | '/settings/account'
     | '/settings/fire-goal'
   id:
     | '__root__'
@@ -147,10 +191,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
+    | '/_layout/dashboard'
     | '/_layout/items'
     | '/_layout/onboarding'
     | '/_layout/settings'
+    | '/auth/login'
+    | '/auth/register'
     | '/_layout/'
+    | '/_layout/settings/account'
     | '/_layout/settings/fire-goal'
   fileRoutesById: FileRoutesById
 }
@@ -160,6 +208,8 @@ export interface RootRouteChildren {
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -206,6 +256,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout/settings': {
       id: '/_layout/settings'
       path: '/settings'
@@ -227,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutItemsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/dashboard': {
+      id: '/_layout/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof LayoutDashboardRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/admin': {
       id: '/_layout/admin'
       path: '/admin'
@@ -241,14 +312,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsFireGoalRouteImport
       parentRoute: typeof LayoutSettingsRoute
     }
+    '/_layout/settings/account': {
+      id: '/_layout/settings/account'
+      path: '/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof LayoutSettingsAccountRouteImport
+      parentRoute: typeof LayoutSettingsRoute
+    }
   }
 }
 
 interface LayoutSettingsRouteChildren {
+  LayoutSettingsAccountRoute: typeof LayoutSettingsAccountRoute
   LayoutSettingsFireGoalRoute: typeof LayoutSettingsFireGoalRoute
 }
 
 const LayoutSettingsRouteChildren: LayoutSettingsRouteChildren = {
+  LayoutSettingsAccountRoute: LayoutSettingsAccountRoute,
   LayoutSettingsFireGoalRoute: LayoutSettingsFireGoalRoute,
 }
 
@@ -258,6 +338,7 @@ const LayoutSettingsRouteWithChildren = LayoutSettingsRoute._addFileChildren(
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutDashboardRoute: typeof LayoutDashboardRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutOnboardingRoute: typeof LayoutOnboardingRoute
   LayoutSettingsRoute: typeof LayoutSettingsRouteWithChildren
@@ -266,6 +347,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutDashboardRoute: LayoutDashboardRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutOnboardingRoute: LayoutOnboardingRoute,
   LayoutSettingsRoute: LayoutSettingsRouteWithChildren,
@@ -281,6 +363,8 @@ const rootRouteChildren: RootRouteChildren = {
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

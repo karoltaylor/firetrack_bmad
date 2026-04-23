@@ -3,13 +3,13 @@ import { z } from "zod"
 
 import EmptyStateDashboard from "@/components/EmptyStateDashboard"
 
-export const Route = createFileRoute("/_layout/")({
+export const Route = createFileRoute("/_layout/dashboard")({
   validateSearch: z
     .object({
       mode: z.enum(["preview", "simulator"]).optional(),
     })
     .strict(),
-  component: IndexDashboardRoute,
+  component: DashboardRoute,
   head: () => ({
     meta: [
       {
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_layout/")({
   }),
 })
 
-function IndexDashboardRoute() {
+function DashboardRoute() {
   const navigate = Route.useNavigate()
   const search = Route.useSearch()
   const mode = search.mode ?? "preview"
@@ -34,4 +34,4 @@ function IndexDashboardRoute() {
   return <EmptyStateDashboard mode={mode} onModeChange={handleModeChange} />
 }
 
-export default IndexDashboardRoute
+export default DashboardRoute

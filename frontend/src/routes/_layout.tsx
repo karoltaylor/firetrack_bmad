@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_layout")({
   beforeLoad: async () => {
     if (!isLoggedIn()) {
       throw redirect({
-        to: "/login",
+        to: "/auth/login",
       })
     }
   },
