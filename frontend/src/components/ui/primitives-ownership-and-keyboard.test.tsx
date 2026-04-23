@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import { describe, expect, it } from "vitest"
-import { render, screen, within } from "@testing-library/react"
+import { afterEach, describe, expect, it } from "vitest"
+import { cleanup, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
 import { Button } from "@/components/ui/button"
@@ -38,6 +38,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const uiDirPath = path.dirname(fileURLToPath(import.meta.url))
+const srcRootPath = path.resolve(uiDirPath, "..", "..")
+const rootRoutePath = path.join(srcRootPath, "routes", "__root.tsx")
+const indexCssPath = path.join(srcRootPath, "index.css")
 
 const requiredOwnedFiles = [
   "alert-dialog.tsx",
@@ -57,6 +60,10 @@ const getSelectedCommandItem = () => {
     document.querySelector<HTMLElement>('[cmdk-item][data-selected="true"]')
   )
 }
+
+afterEach(() => {
+  cleanup()
+})
 
 describe("shadcn ownership contract", () => {
   it("keeps required primitives as local TSX source files", () => {
@@ -185,6 +192,57 @@ describe("radix keyboard behavior", () => {
     const afterArrowUpText = getSelectedCommandItem()?.textContent ?? null
     expect(afterArrowUpText).toBe(afterArrowDownText)
   })
+
+  it("closes Popover with Escape and returns focus to trigger", async () => {
+    const user = userEvent.setup()
+    render(
+      <Popover>
+        <PopoverTrigger asChild>
+          <button type="button">Open popover</button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <button type="button">Popover action</button>
+        </PopoverContent>
+      </Popover>,
+    )
+
+    const trigger = screen.getByRole("button", { name: "Open popover" })
+    await user.click(trigger)
+    expect(screen.getByRole("button", { name: "Popover action" })).toBeDefined()
+
+    await user.keyboard("{Escape}")
+    expect(screen.queryByRole("button", { name: "Popover action" })).toBeNull()
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it("keeps keyboard users from getting trapped in Sheet", async () => {
+    const user = userEvent.setup()
+    render(
+      <>
+        <button type="button">Before sheet</button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <button type="button">Open sheet</button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetTitle>Sheet title</SheetTitle>
+            <SheetDescription>Sheet description</SheetDescription>
+            <button type="button">Inside sheet action</button>
+          </SheetContent>
+        </Sheet>
+        <button type="button">After sheet</button>
+      </>,
+    )
+
+    const trigger = screen.getByRole("button", { name: "Open sheet" })
+    await user.click(trigger)
+    const insideAction = screen.getByRole("button", { name: "Inside sheet action" })
+    insideAction.focus()
+    await user.keyboard("{Escape}")
+
+    expect(screen.queryByRole("dialog")).toBeNull()
+    expect(document.activeElement).toBe(trigger)
+  })
 })
 
 describe("render sanity for newly added primitives", () => {
@@ -231,5 +289,25 @@ describe("render sanity for newly added primitives", () => {
 
     await user.click(screen.getByRole("button", { name: "Open sheet" }))
     expect(screen.getByRole("dialog")).toBeDefined()
+  })
+})
+
+describe("app-level keyboard scaffolding", () => {
+  it("defines skip links and live regions in root route", () => {
+    expect(existsSync(rootRoutePath)).toBe(true)
+    const source = readFileSync(rootRoutePath, "utf8")
+    expect(source).toContain("Skip to ticker")
+    expect(source).toContain("Skip to main content")
+    expect(source).toContain("Skip to navigation")
+    expect(source).toContain('aria-live="polite"')
+    expect(source).toContain('aria-live="assertive"')
+  })
+
+  it("applies global focus-visible ring and skip-link styles", () => {
+    expect(existsSync(indexCssPath)).toBe(true)
+    const source = readFileSync(indexCssPath, "utf8")
+    expect(source).toContain(":focus-visible")
+    expect(source).toContain("outline: 2px solid var(--accent)")
+    expect(source).toContain(".skip-link")
   })
 })

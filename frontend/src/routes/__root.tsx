@@ -7,6 +7,22 @@ import NotFound from "@/components/Common/NotFound"
 export const Route = createRootRoute({
   component: () => (
     <>
+      <a href="#retirement-ticker" className="skip-link">
+        Skip to ticker
+      </a>
+      <a href="#main-content" className="skip-link left-32">
+        Skip to main content
+      </a>
+      <a href="#primary-navigation" className="skip-link left-72">
+        Skip to navigation
+      </a>
+      <div id="app-live-polite" aria-live="polite" className="sr-only" />
+      <div
+        id="app-live-assertive"
+        aria-live="assertive"
+        role="alert"
+        className="sr-only"
+      />
       <HeadContent />
       <Outlet />
       <TanStackRouterDevtools position="bottom-right" />

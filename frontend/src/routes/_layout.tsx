@@ -35,7 +35,7 @@ function Layout() {
             <SidebarTrigger className="-ml-1 text-muted-foreground" />
           </ResponsivePage>
         </header>
-        <main className="layout-safe flex-1 py-6 md:py-8">
+        <main id="main-content" className="layout-safe flex-1 py-6 md:py-8">
           <ResponsivePage>
             <ResponsiveGrid>
               <ResponsiveMainColumn>

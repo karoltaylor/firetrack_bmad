@@ -225,7 +225,10 @@ export function EmptyStateDashboard({
           Methodology: ECB rate as of {variantConversion?.rateAsOf}
         </span>
 
-        <div className="rounded-lg border bg-muted/30 p-4">
+        <div
+          id="retirement-ticker"
+          className="rounded-lg border bg-muted/30 p-4"
+        >
           <p className="font-medium text-sm">Retirement trajectory preview</p>
           <p className="text-muted-foreground text-sm">
             Add your first transaction to see your real trajectory.
