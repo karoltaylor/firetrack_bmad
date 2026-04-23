@@ -1,3 +1,5 @@
+import { OpenAPI } from "@/client"
+
 export type FireVariant = "Lean FIRE" | "Standard FIRE" | "Fat FIRE"
 
 export const FIRE_VARIANT_THRESHOLDS_EUR = {
@@ -22,22 +24,20 @@ export const FALLBACK_ECB_RATES: EcbRatesSnapshot = {
   },
 }
 
-type FrankfurterRatesResponse = {
-  amount: number
-  base: string
-  date: string
+type BackendRatesResponse = {
+  as_of: string
   rates: Record<string, number>
 }
 
 export const fetchLatestEcbRates = async (): Promise<EcbRatesSnapshot> => {
   try {
-    const response = await fetch("https://api.frankfurter.app/latest?from=EUR")
+    const response = await fetch(`${OpenAPI.BASE}/api/v1/rates/latest?from=EUR`)
     if (!response.ok) {
       return FALLBACK_ECB_RATES
     }
-    const payload = (await response.json()) as FrankfurterRatesResponse
+    const payload = (await response.json()) as BackendRatesResponse
     return {
-      asOf: payload.date || FALLBACK_ECB_RATES.asOf,
+      asOf: payload.as_of || FALLBACK_ECB_RATES.asOf,
       rates: { EUR: 1, ...payload.rates },
     }
   } catch {

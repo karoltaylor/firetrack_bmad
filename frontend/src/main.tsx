@@ -14,7 +14,29 @@ import "./index.css"
 import { initSentry, instrumentRouteTracking } from "./instrument"
 import { routeTree } from "./routeTree.gen"
 
-OpenAPI.BASE = import.meta.env.VITE_API_URL
+const normalizeApiBase = (rawBaseUrl: string | undefined): string => {
+  const value = rawBaseUrl?.trim() ?? ""
+
+  if (!value) {
+    return window.location.origin
+  }
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value.replace(/\/+$/, "")
+  }
+  if (value.startsWith("//")) {
+    return `${window.location.protocol}${value}`.replace(/\/+$/, "")
+  }
+  if (value.startsWith(":")) {
+    return `${window.location.protocol}//localhost${value}`.replace(/\/+$/, "")
+  }
+  if (value.startsWith("/")) {
+    return `${window.location.origin}${value}`.replace(/\/+$/, "")
+  }
+
+  return `${window.location.protocol}//${value}`.replace(/\/+$/, "")
+}
+
+OpenAPI.BASE = normalizeApiBase(import.meta.env.VITE_API_URL)
 OpenAPI.TOKEN = async () => {
   return localStorage.getItem("access_token") || ""
 }

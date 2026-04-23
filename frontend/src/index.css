@@ -177,6 +177,8 @@
   --text-tertiary: #797982;
 
   --accent: #7c6bff;
+  /* Darker shade of --accent that meets WCAG AA (≥4.5:1) with white text, used for --primary backgrounds that carry copy. */
+  --accent-strong: #6b55e6;
   --gain: #3fb950;
   --loss: #f85149;
   --off-target: #d97757;
@@ -248,7 +250,7 @@
   --card-foreground: var(--text-primary);
   --popover: var(--bg-elevated);
   --popover-foreground: var(--text-primary);
-  --primary: var(--accent);
+  --primary: var(--accent-strong);
   --primary-foreground: #ffffff;
   --secondary: var(--bg-elevated);
   --secondary-foreground: var(--text-primary);
@@ -266,7 +268,7 @@
   --chart-5: var(--loss);
   --sidebar: var(--bg-elevated);
   --sidebar-foreground: var(--text-primary);
-  --sidebar-primary: var(--accent);
+  --sidebar-primary: var(--accent-strong);
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--text-primary);

@@ -4,6 +4,9 @@
   "workspaces": [
     "frontend"
   ],
+  "engines": {
+    "node": ">=20.19.0 <21 || >=22.12.0"
+  },
   "scripts": {
     "dev": "bun run --filter frontend dev",
     "storybook": "bun run --filter frontend storybook",

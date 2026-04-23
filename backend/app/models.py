@@ -108,6 +108,11 @@ class ItemsPublic(SQLModel):
     count: int
 
 
+class EcbRatesPublic(SQLModel):
+    as_of: str
+    rates: dict[str, float]
+
+
 # Generic message
 class Message(SQLModel):
     message: str
