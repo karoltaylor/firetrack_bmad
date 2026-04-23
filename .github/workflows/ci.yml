@@ -34,6 +34,9 @@ jobs:
         run: uv run mypy app
         working-directory: backend
 
+      - name: Prepare Docker Compose env
+        run: cp .env.example .env
+
       - name: Start backend test dependencies
         run: docker compose up -d db mailcatcher
 
