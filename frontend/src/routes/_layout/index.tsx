@@ -19,7 +19,7 @@ function Dashboard() {
   return (
     <div>
       <div>
-        <h1 className="text-2xl truncate max-w-sm">
+        <h1 className="text-h1 font-semibold break-words">
           Hi, {currentUser?.full_name || currentUser?.email} 👋
         </h1>
         <p className="text-muted-foreground">

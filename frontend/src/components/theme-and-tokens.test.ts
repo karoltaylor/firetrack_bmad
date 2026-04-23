@@ -8,11 +8,19 @@ const cssPath = path.resolve(__dirname, "../index.css")
 const htmlPath = path.resolve(__dirname, "../../index.html")
 const buttonPath = path.resolve(__dirname, "./ui/button.tsx")
 const sidebarPath = path.resolve(__dirname, "./ui/sidebar.tsx")
+const authLayoutPath = path.resolve(__dirname, "./Common/AuthLayout.tsx")
+const appLayoutPath = path.resolve(__dirname, "../routes/_layout.tsx")
+const useMobilePath = path.resolve(__dirname, "../hooks/useMobile.ts")
+const dataTablePath = path.resolve(__dirname, "./Common/DataTable.tsx")
 
 const cssSource = readFileSync(cssPath, "utf8")
 const htmlSource = readFileSync(htmlPath, "utf8")
 const buttonSource = readFileSync(buttonPath, "utf8")
 const sidebarSource = readFileSync(sidebarPath, "utf8")
+const authLayoutSource = readFileSync(authLayoutPath, "utf8")
+const appLayoutSource = readFileSync(appLayoutPath, "utf8")
+const useMobileSource = readFileSync(useMobilePath, "utf8")
+const dataTableSource = readFileSync(dataTablePath, "utf8")
 const fontsDirPath = path.resolve(__dirname, "../../public/fonts")
 
 const rootBlock = cssSource.match(/:root\s*\{([\s\S]*?)\}/)?.[1] ?? ""
@@ -327,5 +335,59 @@ describe("accent interaction policy", () => {
       sidebarSource.match(/(?:hover|active):bg-sidebar-accent(?!\/)/g) ?? []
     expect(disallowedSidebarStates).toHaveLength(0)
     expect(sidebarSource).toMatch(/hover:bg-sidebar-accent\/\d+/)
+  })
+})
+
+describe("responsive layout and typography contract", () => {
+  it("defines breakpoints and layout tokens for the responsive grid contract", () => {
+    expect(themeBlock).toContain("--breakpoint-sm: 40rem;")
+    expect(themeBlock).toContain("--breakpoint-lg: 64rem;")
+    expect(themeBlock).toContain("--breakpoint-2xl: 90rem;")
+
+    expect(getTokenValue(rootBlock, "--layout-container-max")).toBe("1200px")
+    expect(getTokenValue(rootBlock, "--layout-gutter-desktop")).toBe("24px")
+    expect(getTokenValue(rootBlock, "--layout-margin-desktop")).toBe("24px")
+    expect(getTokenValue(rootBlock, "--layout-grid-columns-desktop")).toBe("12")
+  })
+
+  it("uses clamp heading tokens while body and UI tokens stay fixed rem", () => {
+    expect(getTokenValue(rootBlock, "--type-hero")).toBe(
+      "clamp(1.875rem, 1.2vw + 1.6rem, 2.5rem)",
+    )
+    expect(getTokenValue(rootBlock, "--type-h1")).toBe(
+      "clamp(1.5rem, 1vw + 1.25rem, 1.75rem)",
+    )
+    expect(getTokenValue(rootBlock, "--type-h2")).toBe(
+      "clamp(1.25rem, 0.8vw + 1.05rem, 1.375rem)",
+    )
+    expect(getTokenValue(rootBlock, "--type-h3")).toBe(
+      "clamp(1.0625rem, 0.5vw + 0.95rem, 1.125rem)",
+    )
+
+    expect(getTokenValue(rootBlock, "--type-body")).toBe("0.9375rem")
+    expect(getTokenValue(rootBlock, "--type-ui")).toBe("0.875rem")
+    expect(getTokenValue(rootBlock, "--type-meta")).toBe("0.8125rem")
+    expect(getTokenValue(rootBlock, "--type-caption")).toBe("0.75rem")
+  })
+
+  it("keeps mobile breakpoint logic aligned between css and useMobile hook", () => {
+    expect(useMobileSource).toMatch(/const MOBILE_BREAKPOINT_REM = 40/)
+    expect(useMobileSource).toContain("MOBILE_MEDIA_QUERY")
+    expect(useMobileSource).toContain("setIsMobile(mql.matches)")
+  })
+
+  it("applies shell reflow guardrails to prevent horizontal overflow", () => {
+    expect(authLayoutSource).not.toContain("overflow-x-clip")
+    expect(appLayoutSource).not.toContain("overflow-x-clip")
+    expect(cssSource).not.toContain("overflow-x: clip")
+    expect(appLayoutSource).toContain("min-w-0")
+  })
+
+  it("uses container-query responsive controls with viewport fallback classes", () => {
+    expect(dataTableSource).toContain("@container/table-pagination")
+    expect(dataTableSource).toContain("@lg/table-pagination:flex-row")
+    expect(dataTableSource).toContain("sm:flex-row")
+    expect(dataTableSource).toContain("table-fixed")
+    expect(dataTableSource).not.toContain("min-w-[42rem]")
   })
 })
