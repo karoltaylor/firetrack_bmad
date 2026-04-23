@@ -1,4 +1,3 @@
-import "./instrument"
 import {
   MutationCache,
   QueryCache,
@@ -12,6 +11,7 @@ import { ApiError, OpenAPI } from "./client"
 import { ThemeProvider } from "./components/theme-provider"
 import { Toaster } from "./components/ui/sonner"
 import "./index.css"
+import { initSentry, instrumentRouteTracking } from "./instrument"
 import { routeTree } from "./routeTree.gen"
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL
@@ -35,6 +35,9 @@ const queryClient = new QueryClient({
 })
 
 const router = createRouter({ routeTree })
+
+initSentry()
+instrumentRouteTracking()
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router

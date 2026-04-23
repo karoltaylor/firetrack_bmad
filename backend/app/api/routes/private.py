@@ -36,3 +36,8 @@ def create_user(user_in: PrivateUserCreate, session: SessionDep) -> Any:
     session.commit()
 
     return user
+
+
+@router.get("/boom")
+def trigger_unhandled_error() -> Any:
+    raise RuntimeError("intentional observability test error")

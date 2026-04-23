@@ -49,6 +49,7 @@ class Settings(BaseSettings):
         ]
 
     PROJECT_NAME: str
+    SENTRY_ENABLED: bool = False
     SENTRY_DSN: HttpUrl | None = None
     REDIS_URL: str = "redis://localhost:6379/0"
     POSTGRES_SERVER: str
