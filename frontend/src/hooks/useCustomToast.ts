@@ -29,7 +29,16 @@ const useCustomToast = () => {
     })
   }
 
-  return { showSuccessToast, showErrorToast }
+  const showFinancialInfoToast = (description: string) => {
+    announceToLiveRegion("app-live-polite", description)
+    toast.message("Financial information", {
+      description,
+      duration: Number.POSITIVE_INFINITY,
+      dismissible: true,
+    })
+  }
+
+  return { showSuccessToast, showErrorToast, showFinancialInfoToast }
 }
 
 export default useCustomToast

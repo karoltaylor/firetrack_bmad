@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import useAuth from "@/hooks/useAuth"
+import useInputModality from "@/hooks/useInputModality"
 import {
   convertAnnualExpensesToEur,
   FALLBACK_ECB_RATES,
@@ -42,6 +43,7 @@ export function EmptyStateDashboard({
   const [isVariantPopoverOpen, setVariantPopoverOpen] = useState(false)
   const [calculatorState, setCalculatorState] =
     useState<FIRENumberCalculatorState | null>(null)
+  const { activeModality, supportsFinePointer } = useInputModality()
 
   useEffect(() => {
     const resolveOnboardingState = async () => {
@@ -113,6 +115,14 @@ export function EmptyStateDashboard({
   const fireVariant = variantConversion
     ? getFireVariantFromAnnualExpenses(variantConversion.annualExpensesEur)
     : null
+  const modalityLabel =
+    activeModality === "hybrid"
+      ? "Hybrid input detected: hover and touch actions are both supported."
+      : activeModality === "coarse"
+        ? "Touch-first input detected: tap actions are prioritized."
+        : activeModality === "fine"
+          ? "Pointer input detected: hover affordances are enabled."
+          : "Input modality detection is still initializing."
 
   return (
     <section className="space-y-6">
@@ -167,8 +177,16 @@ export function EmptyStateDashboard({
                   <button
                     type="button"
                     className="rounded-full border px-3 py-1 font-medium text-sm"
-                    onMouseEnter={() => setVariantPopoverOpen(true)}
-                    onMouseLeave={() => setVariantPopoverOpen(false)}
+                    onMouseEnter={() => {
+                      if (supportsFinePointer) {
+                        setVariantPopoverOpen(true)
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (supportsFinePointer) {
+                        setVariantPopoverOpen(false)
+                      }
+                    }}
                     onFocus={() => setVariantPopoverOpen(true)}
                     onBlur={() => setVariantPopoverOpen(false)}
                   >
@@ -177,8 +195,16 @@ export function EmptyStateDashboard({
                 </PopoverTrigger>
                 <PopoverContent
                   className="space-y-3 text-sm"
-                  onMouseEnter={() => setVariantPopoverOpen(true)}
-                  onMouseLeave={() => setVariantPopoverOpen(false)}
+                  onMouseEnter={() => {
+                    if (supportsFinePointer) {
+                      setVariantPopoverOpen(true)
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (supportsFinePointer) {
+                      setVariantPopoverOpen(false)
+                    }
+                  }}
                 >
                   <p className="font-semibold">FIRE variant thresholds</p>
                   <table className="w-full border-collapse text-left text-xs">
@@ -256,6 +282,8 @@ export function EmptyStateDashboard({
             Import statement
           </a>
         </div>
+
+        <p className="text-muted-foreground text-xs">{modalityLabel}</p>
 
         <p className="text-muted-foreground">
           Start small: update assumptions, explore the calculator, and add your

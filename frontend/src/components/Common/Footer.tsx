@@ -18,11 +18,22 @@ export function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="border-t py-4 px-6">
-      <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <p className="text-muted-foreground text-sm">
-          FIREtrack - {currentYear}
-        </p>
+    <footer className="border-t px-6 py-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="space-y-1">
+          <p className="text-muted-foreground text-sm">
+            FIREtrack - {currentYear}
+          </p>
+          <p className="text-muted-foreground text-xs">
+            FIREtrack provides informational projections only, not financial
+            advice.
+          </p>
+          <p className="text-muted-foreground text-xs">
+            Glossary:{" "}
+            <abbr title="Financial Independence, Retire Early">FIRE</abbr> and{" "}
+            <abbr title="Safe Withdrawal Rate">SWR</abbr>.
+          </p>
+        </div>
         <div className="flex items-center gap-4">
           {socialLinks.map(({ icon: Icon, href, label }) => (
             <a
