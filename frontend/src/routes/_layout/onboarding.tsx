@@ -52,7 +52,10 @@ const parseInteger = (value: string): number | null => {
 
 const parsePositiveNumber = (value: string): number | null => {
   const parsed = Number(value)
-  return Number.isFinite(parsed) ? parsed : null
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null
+  }
+  return parsed
 }
 
 export const Route = createFileRoute("/_layout/onboarding")({

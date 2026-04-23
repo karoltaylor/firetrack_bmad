@@ -80,6 +80,12 @@ const defaultUserProfile = (): UserProfileRecord => ({
   completedAt: null,
 })
 
+const notifyUserProfileUpdated = () => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("user-profile-updated"))
+  }
+}
+
 export const getCpiSourceForCountry = (countryCode: string): CpiSource => {
   const country = COUNTRY_OPTIONS.find((item) => item.code === countryCode)
   return country?.isEu ? "eurostat_hicp" : "world_bank"
@@ -105,12 +111,14 @@ export const upsertUserProfile = async (
     updatedAt: new Date().toISOString(),
   }
   await db.put(PROFILE_STORE, merged)
+  notifyUserProfileUpdated()
   return merged
 }
 
 export const clearUserProfile = async (): Promise<void> => {
   const db = await getDbPromise()
   await db.delete(PROFILE_STORE, PROFILE_ID)
+  notifyUserProfileUpdated()
 }
 
 export const isOnboardingComplete = (
