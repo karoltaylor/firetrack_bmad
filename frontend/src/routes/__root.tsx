@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router"
 import { type ReactNode, useEffect, useState } from "react"
 import BrowserSupportBanner from "@/components/Common/BrowserSupportBanner"
 import ErrorComponent from "@/components/Common/ErrorComponent"
+import IndexedDBUnavailableBanner from "@/components/Common/IndexedDBUnavailableBanner"
 import NotFound from "@/components/Common/NotFound"
 import { isLoggedIn } from "@/hooks/useAuth"
 
@@ -34,6 +35,7 @@ function RootRouteComponent() {
         className="sr-only"
       />
       <BrowserSupportBanner />
+      <IndexedDBUnavailableBanner />
       <HeadContent />
       <Outlet />
       <DevtoolsHost />

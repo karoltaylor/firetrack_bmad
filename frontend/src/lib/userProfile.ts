@@ -1,20 +1,9 @@
-import { type DBSchema, openDB } from "idb"
+// UserProfileRecord and CpiSource are defined in the central DB schema to
+// avoid circular imports. They are re-exported here for backward compatibility.
+export type { CpiSource, UserProfileRecord } from "@/lib/db/indexeddb"
 
-export type CpiSource = "eurostat_hicp" | "world_bank"
-
-export type UserProfileRecord = {
-  id: "current"
-  currentAge: number | null
-  targetRetirementAge: number | null
-  annualExpenses: number | null
-  swrPercent: number
-  countryCode: string | null
-  baseCurrency: string
-  cpi_source: CpiSource | null
-  lastStep: number
-  updatedAt: string
-  completedAt: string | null
-}
+import type { CpiSource, UserProfileRecord } from "@/lib/db/indexeddb"
+import { getDB } from "@/lib/db/indexeddb"
 
 type UserProfilePatch = Partial<Omit<UserProfileRecord, "id">>
 
@@ -23,13 +12,6 @@ type CountryOption = {
   label: string
   currency: string
   isEu: boolean
-}
-
-interface FiretrackDb extends DBSchema {
-  user_profile: {
-    key: string
-    value: UserProfileRecord
-  }
 }
 
 export const COUNTRY_OPTIONS: CountryOption[] = [
@@ -47,29 +29,8 @@ export const COUNTRY_OPTIONS: CountryOption[] = [
 
 export const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
 
-const DATABASE_NAME = "firetrack"
-const DATABASE_VERSION = 1
 const PROFILE_STORE = "user_profile"
 const PROFILE_ID = "current"
-
-let dbPromise: ReturnType<typeof openDB<FiretrackDb>> | null = null
-
-const getDbPromise = () => {
-  if (dbPromise) {
-    return dbPromise
-  }
-  if (typeof indexedDB === "undefined") {
-    throw new Error("IndexedDB is unavailable in this environment.")
-  }
-  dbPromise = openDB<FiretrackDb>(DATABASE_NAME, DATABASE_VERSION, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains(PROFILE_STORE)) {
-        db.createObjectStore(PROFILE_STORE, { keyPath: "id" })
-      }
-    },
-  })
-  return dbPromise
-}
 
 const defaultUserProfile = (): UserProfileRecord => ({
   id: PROFILE_ID,
@@ -102,14 +63,14 @@ export const getCurrencyForCountry = (countryCode: string): string => {
 }
 
 export const getUserProfile = async (): Promise<UserProfileRecord | null> => {
-  const db = await getDbPromise()
+  const db = await getDB()
   return (await db.get(PROFILE_STORE, PROFILE_ID)) ?? null
 }
 
 export const upsertUserProfile = async (
   patch: UserProfilePatch,
 ): Promise<UserProfileRecord> => {
-  const db = await getDbPromise()
+  const db = await getDB()
   const existing =
     (await db.get(PROFILE_STORE, PROFILE_ID)) ?? defaultUserProfile()
   const merged: UserProfileRecord = {
@@ -126,7 +87,7 @@ export const upsertUserProfile = async (
 }
 
 export const clearUserProfile = async (): Promise<void> => {
-  const db = await getDbPromise()
+  const db = await getDB()
   await db.delete(PROFILE_STORE, PROFILE_ID)
   notifyUserProfileUpdated()
 }

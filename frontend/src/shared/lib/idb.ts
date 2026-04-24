@@ -1,8 +1,8 @@
-import { type IDBPDatabase, openDB } from "idb"
-
-export const getDB = (): Promise<IDBPDatabase> =>
-  openDB("firetrack-db", 1, {
-    upgrade(_db) {
-      // stores added per-story
-    },
-  })
+/**
+ * @deprecated This stub is superseded by the centralized DB layer at
+ * `src/lib/db/indexeddb.ts`.  Import from `@/lib/db` instead.
+ *
+ * This re-export shim is kept only to prevent build breakage if any legacy
+ * import still references this path.  No new code should import from here.
+ */
+export { getDB } from "@/lib/db/indexeddb"

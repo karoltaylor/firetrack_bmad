@@ -71,7 +71,9 @@ describe("fetchLatestEcbRates", () => {
   it("falls back when backend responds with non-OK status", async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValue(new Response("", { status: 503, statusText: "Service Unavailable" }))
+      .mockResolvedValue(
+        new Response("", { status: 503, statusText: "Service Unavailable" }),
+      )
     vi.stubGlobal("fetch", fetchMock)
 
     const result = await fetchLatestEcbRates()
