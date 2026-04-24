@@ -78,7 +78,7 @@
     "@storybook/react": "^10.3.5",
     "@storybook/react-vite": "^10.3.5",
     "@tanstack/router-devtools": "^1.142.11",
-    "@tanstack/router-plugin": "^1.140.0",
+    "@tanstack/router-plugin": "^1.167.22",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/libsodium-wrappers": "^0.8.2",
